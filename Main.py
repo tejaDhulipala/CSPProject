@@ -1,6 +1,6 @@
 import sys
 import pygame as pg
-from Planet import *
+from PlanetClass import *
 
 # Initialize the library
 pg.init()
@@ -13,8 +13,8 @@ screen = pg.display.set_mode(size)
 # Set up the planets
 planetSystem = []
 earth = Planet((800, 450), (0, 0), 200, planetSystem, color=(0, 255, 0))
-mars = Planet((1000, 450), (0, 0), 1000, planetSystem, color=(255, 100, 100))
-third = Planet((1000, 300), (0, 0), 400, planetSystem)
+mars = Planet((1000, 450), (0, 0), 1, planetSystem, color=(255, 100, 100))
+
 
 running = True
 while running:
@@ -31,7 +31,7 @@ while running:
 
     # Update variables
     for planet in planetSystem:
-        planet.changePos()
+        planet.changePos(0.005)
 
     # Update every frame
     pg.display.flip()
