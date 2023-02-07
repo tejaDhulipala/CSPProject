@@ -33,5 +33,5 @@ def reset(sys):
         planet.v = planet.initv
         planet.pos = planet.initpos
         planet.isRunning = False
-        print(planet.pos)
-        print(planet.initpos)
+        print("Planet.initv = " + str(planet.v))
+        print("Planet.initpos = " + str(planet.initpos))
