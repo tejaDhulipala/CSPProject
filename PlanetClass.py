@@ -1,21 +1,22 @@
 import pygame as pg
 import random
 from math import log, pow
+from copy import deepcopy
 
 # The conversion of the mass to the radius, how much the mass is multiplied by to get the radius
 from pygame.math import Vector2
 
 #massToRadius = 1
-G = 1
+G = 1 # whatever I want it to be screw u
 
 
 class Planet:
     v: Vector2
     pos: Vector2
 
-    def __init__(self, pos, v, m, system: list, color=(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256)), a=pg.Vector2(0, 0)):
-        self.initpos = pg.math.Vector2(pos)
-        self.initv = pg.math.Vector2(v)
+    def __init__(self, pos, v, m, system: list, color=(random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256)), a=pg.Vector2(0, 0), r=12):
+        self.initpos = pg.math.Vector2(deepcopy(pos))
+        self.initv = pg.math.Vector2(deepcopy(v))
         self.pos = pg.math.Vector2(pos)
         self.v = pg.math.Vector2(v)
         self.m = m
@@ -23,10 +24,11 @@ class Planet:
         self.system = system
         self.a = a
         self.isRunning = False
+        self.r = r
         system.append(self)
 
     def draw(self, screen):
-        pg.draw.circle(screen, self.color, self.pos, 12)
+        pg.draw.circle(screen, self.color, self.pos, self.r)
         #pg.draw.line(screen, (255, 0, 0), self.pos, self.pos + self.a * 10000, 2)
 
     def changeVals(self, t):
