@@ -3,6 +3,7 @@ import pygame as pg
 from PlanetClass import *
 from math import pow
 from Button import *
+from ConsoleInput import *
 
 # Initialize the library
 pg.init()
@@ -16,16 +17,29 @@ screen = pg.display.set_mode(size)
 
 # Set up the planets
 planetSystem = []
+# Use User Input to Create Planets
+print("Welcome to Gravity Simulator! You can create bodies and see how they interact")
+print("Click Exit to Stop making Planets")
+while input("Create New Body? ") != "exit":
+    mass = intInput("Enter the mass of the body: ")
+    xVal = intInput("Enter body X-Value (0-1100): ")
+    yVal = intInput("Enter body Y-Value (0-900): ")
+    xV = intInput("Enter the x value of the body's initial velocity: ")
+    yV = intInput("Enter the y value of the body's initial velocity: ")
+    r = intInput("Enter the radius of the body (in pixels): ")
+    planetSystem.append(Planet((xVal, yVal), (xV, yV), mass, planetSystem, r=r))
+
+
 #moon = Planet((925, 500), (0, -5), 1, planetSystem, color=(100, 100, 100), r=5)
 #earth = Planet((700, 500), (0, -18), 100, planetSystem, color=(0, 255, 0)) # -18
-#mars = Planet((1000, 450), (0, 2), 100, planetSystem, color=(255, 100, 100))
-jupiter = Planet((900, 500), (0, 2), 1e4, planetSystem, color=(255, 0, 0)) # 12
-sun = Planet((500, 500), (0, 0), 1e10, planetSystem, color=(255, 255, 255), r=15)
-mercury = Planet((550, 500), (0, -8), 100, planetSystem, (200, 100, 100), r=8)
-venus = Planet((600, 500), (0, -12), 50, planetSystem, color=(255, 50, 50), r=10)
-#blackhole = Planet((700, 700), (0, 0), 1e10, planetSystem, color=(0, 0, 0))
-planetX = Planet((950, 500), (0, 0), 1e10, planetSystem, (0, 0, 255), r=15)
-print(planetSystem)
+#mars = Planet((1000, 500), (0, -50), 100, planetSystem, color=(255, 255, 100))
+#jupiter = Planet((900, 500), (0, -0.5), 1e6, planetSystem, color=(255, 0, 0)) # 12
+#sun = Planet((500, 500), (0, 0), 1e10, planetSystem, color=(255, 255, 255), r=15)
+#mercury = Planet((550, 500), (0, -20), 100, planetSystem, (200, 100, 100), r=8)
+#venus = Planet((600, 500), (0, -12), 50, planetSystem, color=(255, 50, 50), r=10)
+#blackhole = Planet((1200, 500), (0, 0), 1e20, planetSystem, color=WHITE)
+#planetX = Planet((950, 500), (0, 0), 1e10, planetSystem, (0, 0, 255), r=15)
+
 
 # Set up menu and buttons
 runButton = GameButton((1350, 50), "Run", (255, 0, 0), 90, 60, lambda: run(planetSystem), textHeight=50)
@@ -68,14 +82,14 @@ while running:
     # Update variables
     for i in range(2):
         for planet in planetSystem:
-            planet.changeVals(0.1)
+            planet.changeVals(0.05)
         for planet in planetSystem:
-            planet.changePos(0.1)
+            planet.changePos(0.05)
     #print("Earth pos: " + str(earth.initpos))
     for i in range(len(pastPoss)):
-        if not frameNumber % 10:
+        if not frameNumber % 5:
             pastPoss[i].append(deepcopy(planetSystem[i].pos))
-        if len(pastPoss[i]) > 200:
+        if len(pastPoss[i]) > 100:
             pastPoss[i].pop(0)
 
     # Update every frame
