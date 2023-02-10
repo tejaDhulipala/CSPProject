@@ -4,6 +4,7 @@ from PlanetClass import *
 from math import pow
 from Button import *
 from ConsoleInput import *
+import time
 
 # Set up the planets
 planetSystem = []
@@ -49,7 +50,12 @@ screen = pg.display.set_mode(size)
 # Set up menu and buttons
 runButton = GameButton((1350, 50), "Run", (255, 0, 0), 90, 60, lambda: run(planetSystem), textHeight=50)
 resetButton = GameButton((1350, 250), "Reset", (255, 0, 0), 120, 60, lambda: reset(planetSystem), textHeight=50)
-newPlanetButton = GameButton((1350, 400), "New Body (M=100)", (0, 200, 0), 150, 30, lambda: changeSelect(100), textHeight=20)
+newPlanetButton1 = GameButton((1350, 400), "New Body (Mass=100)", (0, 200, 0), 170, 30, lambda: changeSelect(100), textHeight=20)
+newPlanetButton2 = GameButton((1350, 450), "New Body (Mass=1e3)", (0, 200, 0), 170, 30, lambda: changeSelect(1e3), textHeight=20)
+newPlanetButton3 = GameButton((1350, 500), "New Body (Mass=1e4)", (0, 200, 0), 170, 30, lambda: changeSelect(1e4), textHeight=20)
+newPlanetButton4 = GameButton((1350, 550), "New Body (Mass=1e5)", (0, 200, 0), 170, 30, lambda: changeSelect(1e5), textHeight=20)
+newPlanetButton5 = GameButton((1350, 600), "New Body (Mass=1e6)", (0, 200, 0), 170, 30, lambda: changeSelect(1e6), textHeight=20)
+newPlanetButton6 = GameButton((1350, 650), "New Body (Mass=1e7)", (0, 200, 0), 170, 30, lambda: changeSelect(1e7), textHeight=20)
 
 # Past positions
 pastPoss = [[] for i in range(len(planetSystem))]
@@ -57,9 +63,13 @@ pastPoss = [[] for i in range(len(planetSystem))]
 running = True
 frameNumber = 0
 screenPos = [0, 0]
-adj = 0.3
-mousecolor = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+adj = 0.5
+mousecolor = (randrange(50, 255), randrange(50, 255), randrange(50, 255))
+settingInitVelocity = False
+planetSetLoc = (0, 0)
+vSetCoeff = 0.1
 while running:
+    start = time.time()
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -69,13 +79,23 @@ while running:
             print(pg.mouse.get_pos())
             runButton.checkPos(pg.mouse.get_pos())
             resetButton.checkPos(pg.mouse.get_pos())
-            if newPlanetButton.checkTrue(pg.mouse.get_pos()):
+            if newPlanetButton1.checkTrue(pg.mouse.get_pos()):
                 chosePlanet = 100
+            elif newPlanetButton2.checkTrue(pg.mouse.get_pos()):
+                chosePlanet = 1e3
+            elif newPlanetButton3.checkTrue(pg.mouse.get_pos()):
+                chosePlanet = 1e4
+            elif newPlanetButton4.checkTrue(pg.mouse.get_pos()):
+                chosePlanet = 1e5
+            elif newPlanetButton5.checkTrue(pg.mouse.get_pos()):
+                chosePlanet = 1e6
+            elif newPlanetButton6.checkTrue(pg.mouse.get_pos()):
+                chosePlanet = 1e7
     keys = pg.key.get_pressed()
     if keys[pg.K_SPACE]:
         adj = 1
     else:
-        adj = 0.3
+        adj = 0.5
     if keys[pg.K_LEFT]:
         screenPos[0] -= adj
     elif keys[pg.K_RIGHT]:
@@ -101,11 +121,15 @@ while running:
     # Draw Buttons
     runButton.draw(screen)
     resetButton.draw(screen)
-    newPlanetButton.draw(screen)
-
+    newPlanetButton1.draw(screen)
+    newPlanetButton2.draw(screen)
+    newPlanetButton3.draw(screen)
+    newPlanetButton4.draw(screen)
+    newPlanetButton5.draw(screen)
+    newPlanetButton6.draw(screen)
 
     # Update variables
-    for i in range(2):
+    for i in range(10):
         for planet in planetSystem:
             planet.changeVals(0.05)
         for planet in planetSystem:
@@ -119,13 +143,31 @@ while running:
 
     # Putting the Planets in
     if chosePlanet:
-        pg.draw.circle(screen, mousecolor, pg.mouse.get_pos(), 10)
+        pg.draw.circle(screen, mousecolor, pg.mouse.get_pos(), (8 + 1 * log(chosePlanet, 10)))
         if pg.mouse.get_pos()[0] <= 1200 and pg.mouse.get_pressed()[0]:
-            Planet(pg.mouse.get_pos(), (0, 0), chosePlanet, planetSystem, mousecolor, r=10)
-            mousecolor = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
+            latest = Planet(pg.mouse.get_pos(), (0, 0), chosePlanet, planetSystem, mousecolor, r=(8 + 1 * log(chosePlanet, 10)))
+            pastPoss.append([])
+            mousecolor = (randrange(50, 255), randrange(50, 255), randrange(50, 255))
             chosePlanet = 0
+            settingInitVelocity = True
+            planetSetLoc = pg.mouse.get_pos()
+    if settingInitVelocity:
+        pg.draw.line(screen, (255, 0, 0), planetSetLoc, pg.mouse.get_pos())
+        if pg.mouse.get_pos()[0] <= 1200 and pg.mouse.get_pressed()[0]:
+            latest.v = (vSetCoeff * (pg.mouse.get_pos()[0] - planetSetLoc[0]), vSetCoeff * (pg.mouse.get_pos()[1] - planetSetLoc[1]))
+            settingInitVelocity = False
+
+
+    timePerRun = time.time() - start
+    font = pg.font.SysFont("Arial", 20)
+    text = font.render(str(round(1 / timePerRun)), True, WHITE)
+    if len(planetSystem) > 0:
+        runningText = font.render("Is running " + str(planetSystem[0].isRunning), True, WHITE)
+    else:
+        runningText = font.render("Is running: " + str(False), True, WHITE)
+    screen.blit(text, (1550, 875))
+    screen.blit(runningText, (1220, 875))
 
     # Update every frame
     pg.display.flip()
     frameNumber += 1
-    #print(frameNumber)
