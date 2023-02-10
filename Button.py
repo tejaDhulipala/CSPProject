@@ -1,6 +1,7 @@
 import pygame as pg
 
 
+
 class GameButton:
     def __init__(self, pos, text, color, width, height, callback, textHeight=20):
         self.pos = pos
@@ -21,6 +22,11 @@ class GameButton:
         if self.pos[0] <= pos[0] <= self.pos[0] + self.width and self.pos[1] <= pos[1] <= self.pos[1] + self.height:
             self.callback()
 
+    def checkTrue(self, pos):
+        if self.pos[0] <= pos[0] <= self.pos[0] + self.width and self.pos[1] <= pos[1] <= self.pos[1] + self.height:
+            return True
+        return False
+
 
 # Control Functions
 def run(sys):
@@ -34,3 +40,9 @@ def reset(sys):
         planet.pos = planet.initpos
         planet.isRunning = False
 
+
+def changeSelect(mass):
+    global chosePlanet
+    chosePlanet = mass
+    print("changed")
+    print(chosePlanet)

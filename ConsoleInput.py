@@ -8,3 +8,7 @@ def intInput(prompt):
         except ValueError:
             ans = input("Please Try Again! " + prompt)
     return final
+
+
+def toScreenPos(pos, screenPos):
+    return (pos[0] - screenPos[0], pos[1] - screenPos[1])
