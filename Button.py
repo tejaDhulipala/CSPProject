@@ -1,7 +1,6 @@
 import pygame as pg
 
 
-
 class GameButton:
     def __init__(self, pos, text, color, width, height, callback, textHeight=20):
         self.pos = pos
@@ -39,7 +38,6 @@ def reset(sys):
         planet.v = planet.initv
         planet.pos = planet.initpos
         planet.isRunning = False
-
 
 def changeSelect(mass):
     global chosePlanet
